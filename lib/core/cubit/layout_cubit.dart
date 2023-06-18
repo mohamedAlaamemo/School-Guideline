@@ -76,7 +76,6 @@ class LayoutCubit extends Cubit<LayoutState> {
         print(error);
       }
     });
-
     FirebaseFirestore.instance
         .collection('users chats')
         .doc(receiverId)
@@ -123,9 +122,9 @@ class LayoutCubit extends Cubit<LayoutState> {
     });
   }
 
+
   List<AddNewUserModel> allAdminList = [];
   List<String> allAdminListId = [];
-
   void gitAllAdmin(context) {
     emit(LayoutGetAllAdminLodingState());
     FirebaseFirestore.instance.collection('admin').get().then((value) {
@@ -266,17 +265,12 @@ class LayoutCubit extends Cubit<LayoutState> {
     });
     emit(LayoutEmitState());
   }
-
-
   File? assignmentFile;
-
   Future<void> selectFile({context, required String level}) async {
     emit(LayoutSelectFileLodingState());
     FilePickerResult? result = await FilePicker.platform.pickFiles();
-
     if (result != null) {
       emit(LayoutSelectFileSuccessState());
-
       File assignmentFile = File(result.files.single.path ?? '');
       PlatformFile file = result.files.first;
       FirebaseStorage.instance
@@ -333,7 +327,6 @@ class LayoutCubit extends Cubit<LayoutState> {
       }
       emit(LayoutAddFileAssignmentError1State());
     });
-
     FirebaseFirestore.instance
         .collection('level$level')
         .doc('assignment')
@@ -683,7 +676,6 @@ class LayoutCubit extends Cubit<LayoutState> {
       emit(LayoutInsertTableErrorState());
     });
   }
-  
 
 
 
@@ -746,7 +738,6 @@ class LayoutCubit extends Cubit<LayoutState> {
         .delete().then((value) {
           emit(LayoutDeleteItemTableSuccessState());
     });
-
   }
 
 }
