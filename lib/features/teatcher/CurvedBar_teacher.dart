@@ -80,7 +80,7 @@ class _HomeState extends State<navigationbarteacher> {
                 LayoutCubit.get(context).gitAllAdmin(context);
                 LayoutCubit.get(context).getAllParent();
                 LayoutCubit.get(context).getAllTeacher();
-                LayoutCubit.get(context).EmitState();
+                LayoutCubit.get(context).emitState();
               }
           });
         },

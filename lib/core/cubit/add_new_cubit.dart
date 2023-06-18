@@ -1,12 +1,9 @@
-import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:meta/meta.dart';
-
 import '../model/add_new_user_model.dart';
 import '../widgets/show_toast.dart';
-
 part 'add_new_state.dart';
 
 class AddNewCubit extends Cubit<AddNewState> {
@@ -56,7 +53,9 @@ class AddNewCubit extends Cubit<AddNewState> {
           uId: value.user!.uid
       );
     }).catchError((error) {
-      print(error.toString());
+      if (kDebugMode) {
+        print(error.toString());
+      }
       displayErrorMotionToast(context, mes: 'Invalid Data',);
       emit(RegisterNewUserErrorState());
     });
@@ -94,7 +93,9 @@ class AddNewCubit extends Cubit<AddNewState> {
       displaySuccessMotionToast(context, mes: 'You have Add successfully');
     }).catchError((error) {
       emit(CreateUserErrorState());
-      print(error.toString());
+      if (kDebugMode) {
+        print(error.toString());
+      }
     });
   }
 

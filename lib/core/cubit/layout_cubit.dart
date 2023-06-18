@@ -1,16 +1,12 @@
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_file_downloader/flutter_file_downloader.dart';
-import 'package:folder_file_saver/folder_file_saver.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:trypro/core/widgets/show_toast.dart';
-import 'package:trypro/core/cubit/add_new_cubit.dart';
 import '../../../core/model/add_new_user_model.dart';
 import '../../../core/model/message_model.dart';
 import '../../../core/model/student_model.dart';
@@ -29,27 +25,31 @@ class LayoutCubit extends Cubit<LayoutState> {
 
   AddNewUserModel userModel = AddNewUserModel.name();
 
-  void GitUserData({required String coll}) {
+  void gitUserData({required String coll}) {
     emit(LayoutGitUserDataLodingState());
     FirebaseFirestore.instance
         .collection(coll)
         .doc(CacheHelper.getData(key: 'uId'))
         .get()
         .then((value) {
-      print(value.data());
+      if (kDebugMode) {
+        print(value.data());
+      }
       userModel = AddNewUserModel.fromJson(value.data()!);
       emit(LayoutGitUserDataSuccessState());
     }).catchError((error) {
-      print(error);
+      if (kDebugMode) {
+        print(error);
+      }
       emit(LayoutGitUserDataErrorState());
     });
   }
 
-  void EmitState() {
+  void emitState() {
     emit(LayoutEmitState());
   }
 
-  void SendMessage({
+  void sendMessage({
     required String senderId,
     required String? receiverId,
     required String date,
@@ -72,7 +72,9 @@ class LayoutCubit extends Cubit<LayoutState> {
       emit(LayoutSendMessageSuccessState());
     }).catchError((error) {
       emit(LayoutSendMessageErrorState());
-      print(error);
+      if (kDebugMode) {
+        print(error);
+      }
     });
 
     FirebaseFirestore.instance
@@ -86,13 +88,15 @@ class LayoutCubit extends Cubit<LayoutState> {
       emit(LayoutSendMessageSuccessState());
     }).catchError((error) {
       emit(LayoutSendMessageErrorState());
-      print(error);
+      if (kDebugMode) {
+        print(error);
+      }
     });
   }
 
   List<SendMessageModel> messageInChat = [];
 
-  void GetMessageInChat({
+  void getMessageInChat({
     required String senderId,
     required String? receiverId,
   }) {
@@ -108,9 +112,13 @@ class LayoutCubit extends Cubit<LayoutState> {
       messageInChat = [];
       event.docs.forEach((element) {
         messageInChat.add(SendMessageModel.fromJson(element.data()));
-        print(element.data().toString());
+        if (kDebugMode) {
+          print(element.data().toString());
+        }
       });
-      print(messageInChat.length);
+      if (kDebugMode) {
+        print(messageInChat.length);
+      }
       emit(LayoutGetMessageInChatState());
     });
   }
@@ -148,7 +156,9 @@ class LayoutCubit extends Cubit<LayoutState> {
       }
       emit(LayoutEmitState());
     }).catchError((error) {
-      print(error);
+      if (kDebugMode) {
+        print(error);
+      }
       emit(LayoutGetAllAdminErrorState());
     });
   }
@@ -166,7 +176,9 @@ class LayoutCubit extends Cubit<LayoutState> {
           level: level, sId: value.id, value: {'name': name, 'level': level});
     }).catchError((error) {
       emit(LayoutInsertStudentToParentErrorState());
-      print(error);
+      if (kDebugMode) {
+        print(error);
+      }
     });
   }
 
@@ -174,14 +186,16 @@ class LayoutCubit extends Cubit<LayoutState> {
       {required String sId, required String level, required var value}) {
     emit(LayoutAddStudentToLevelLodingState());
     FirebaseFirestore.instance
-        .collection('level${level}')
+        .collection('level$level')
         .doc(sId)
         .set(value)
         .then((value) {
       emit(LayoutAddStudentToLevelSuccessState());
     }).catchError((error) {
       emit(LayoutAddStudentToLevelErrorState());
-      print(error);
+      if (kDebugMode) {
+        print(error);
+      }
     });
   }
 
@@ -204,7 +218,9 @@ class LayoutCubit extends Cubit<LayoutState> {
       });
       emit(LayoutGetAllStudentParentSuccessState());
     }).catchError((error) {
-      print(error);
+      if (kDebugMode) {
+        print(error);
+      }
     });
   }
 
@@ -224,15 +240,19 @@ class LayoutCubit extends Cubit<LayoutState> {
           attendanceStudent.add(false);
         }
       });
-      print(studentLevel1.length);
+      if (kDebugMode) {
+        print(studentLevel1.length);
+      }
       emit(LayoutGetAllStudentLevelSuccessState());
     }).catchError((error) {
-      print(error);
+      if (kDebugMode) {
+        print(error);
+      }
       emit(LayoutGetAllStudentLevelErrorState());
     });
   }
 
-  void atendStudent({
+  void attendStudent({
   required int index
 }){
     int i=0;
@@ -259,8 +279,6 @@ class LayoutCubit extends Cubit<LayoutState> {
 
       File assignmentFile = File(result.files.single.path ?? '');
       PlatformFile file = result.files.first;
-      print(file.name);
-      print(file.path);
       FirebaseStorage.instance
           .ref()
           .child('assignments/${file.name}')
@@ -268,7 +286,9 @@ class LayoutCubit extends Cubit<LayoutState> {
           .then((value) {
         emit(LayoutUploadFileSuccessState());
         value.ref.getDownloadURL().then((value) {
-          print(value.toString());
+          if (kDebugMode) {
+            print(value.toString());
+          }
           emit(LayoutGetDownloadURLSuccessState());
           addFileAssignment(
               context: context,
@@ -276,11 +296,15 @@ class LayoutCubit extends Cubit<LayoutState> {
               filePath: value.toString(),
               level: level);
         }).catchError((error) {
-          print(error);
+          if (kDebugMode) {
+            print(error.toString());
+          }
           emit(LayoutGetDownloadURLErrorState());
         });
       }).catchError((error) {
-        print(error);
+        if (kDebugMode) {
+          print(error);
+        }
         emit(LayoutUploadFileErrorState());
       });
     } else {
@@ -304,7 +328,9 @@ class LayoutCubit extends Cubit<LayoutState> {
         .then((value) {
       emit(LayoutAddFileAssignmentSuccess1State());
     }).catchError((error) {
-      print(error);
+      if (kDebugMode) {
+        print(error.toString());
+      }
       emit(LayoutAddFileAssignmentError1State());
     });
 
@@ -318,7 +344,9 @@ class LayoutCubit extends Cubit<LayoutState> {
       displaySuccessMotionToast(context,
           mes: 'Your Assignment Added Successfully');
     }).catchError((error) {
-      print(error);
+      if (kDebugMode) {
+        print(error.toString());
+      }
       emit(LayoutAddFileAssignmentError2State());
     });
   }
@@ -360,11 +388,15 @@ class LayoutCubit extends Cubit<LayoutState> {
         allStudentAssignmentLevelList
             .add(AssignmentModel.fromJson(element.data()));
       });
-      print(allStudentAssignmentLevelList.length);
+      if (kDebugMode) {
+        print(allStudentAssignmentLevelList.length);
+      }
 
       emit(LayoutGetAllAssignmentStudentSuccessState());
     }).catchError((error) {
-      print(error);
+      if (kDebugMode) {
+        print(error.toString());
+      }
       emit(LayoutGetAllAssignmentStudentErrorState());
     });
   }
@@ -381,15 +413,21 @@ class LayoutCubit extends Cubit<LayoutState> {
 
       File sendAssignmentFile = File(result.files.single.path ?? '');
       PlatformFile file = result.files.first;
-      print(file.name);
-      print(file.path);
+      if (kDebugMode) {
+        print(file.name);
+      }
+      if (kDebugMode) {
+        print(file.path);
+      }
       FirebaseStorage.instance
           .ref()
           .child('assignmentsFromStudent/${file.name}')
           .putFile(sendAssignmentFile)
           .then((value) {
         value.ref.getDownloadURL().then((value) {
-          print(value.toString());
+          if (kDebugMode) {
+            print(value.toString());
+          }
           addFileAssignmentToTeacher(
               context: context,
               fileName: file.name,
@@ -397,10 +435,14 @@ class LayoutCubit extends Cubit<LayoutState> {
               studentId: studentId,
               teacherId: teacherId);
         }).catchError((error) {
-          print(error);
+          if (kDebugMode) {
+            print(error.toString());
+          }
         });
       }).catchError((error) {
-        print(error);
+        if (kDebugMode) {
+          print(error);
+        }
         emit(LayoutSelectFileToSendAssignmentToTeatcherErrorState());
       });
     }
@@ -429,7 +471,9 @@ class LayoutCubit extends Cubit<LayoutState> {
       emit(LayoutAddFileAssignmentToTeacherSuccessState());
       displaySuccessMotionToast(context, mes: 'Submitted SuccessFully');
     }).catchError((error) {
-      print(error);
+      if (kDebugMode) {
+        print(error);
+      }
       emit(LayoutAddFileAssignmentToTeacherErrorState());
     });
   }
@@ -492,7 +536,9 @@ class LayoutCubit extends Cubit<LayoutState> {
 
   void getAllAssignmentFromStudentToTeacher() {
     emit(LayoutGetAllAssignmentFromStudentToTeacherLodingState());
-    print(CacheHelper.getData(key: 'uId'));
+    if (kDebugMode) {
+      print(CacheHelper.getData(key: 'uId'));
+    }
     FirebaseFirestore.instance
         .collection('Teacher')
         .doc(CacheHelper.getData(key: 'uId'))
@@ -504,10 +550,14 @@ class LayoutCubit extends Cubit<LayoutState> {
         allAssignmentFromStudentList
             .add(AssignmentModelFromStudent.fromJson(element.data()));
       });
-      print(allAssignmentFromStudentList.length);
+      if (kDebugMode) {
+        print(allAssignmentFromStudentList.length);
+      }
       emit(LayoutGetAllAssignmentFromStudentToTeacherSuccessState());
     }).catchError((error) {
-      print(error.toString());
+      if (kDebugMode) {
+        print(error.toString());
+      }
       emit(LayoutGetAllAssignmentFromStudentToTeacherErrorState());
     });
   }
@@ -535,7 +585,9 @@ class LayoutCubit extends Cubit<LayoutState> {
       emit(LayoutInsertGradeToStudentSuccessState());
       displaySuccessMotionToast(context, mes: 'Grade Added Successfully');
     }).catchError((error) {
-      print(error.toString());
+      if (kDebugMode) {
+        print(error.toString());
+      }
       emit(LayoutInsertGradeToStudentErrorState());
     });
   }
@@ -559,11 +611,15 @@ class LayoutCubit extends Cubit<LayoutState> {
       value.docs.forEach((element) {
         studentGradeList.add(StudentGradeModel.fromJson(element.data()));
       });
-      print(studentGradeList.length);
+      if (kDebugMode) {
+        print(studentGradeList.length);
+      }
       emit(LayoutGetAllGradeForStudentSuccessState());
     }).catchError((error) {
       emit(LayoutGetAllGradeForStudentErrorState());
-      print(error.toString());
+      if (kDebugMode) {
+        print(error.toString());
+      }
     });
   }
 
@@ -578,12 +634,16 @@ class LayoutCubit extends Cubit<LayoutState> {
         url: url,
         name: fileName,
         onDownloadCompleted: (String path) {
-          print('FILE DOWNLOADED TO PATH: $path');
+          if (kDebugMode) {
+            print('FILE DOWNLOADED TO PATH: $path');
+          }
           displaySuccessMotionToast(context, mes: 'Go To $path');
           emit(LayoutDownLoadFileSuccessState());
         },
         onDownloadError: (String error) {
-          print('DOWNLOAD ERROR: $error');
+          if (kDebugMode) {
+            print('DOWNLOAD ERROR: $error');
+          }
           emit(LayoutDownLoadFileErrorState());
         });
 
@@ -617,7 +677,9 @@ class LayoutCubit extends Cubit<LayoutState> {
       displaySuccessMotionToast(context, mes: 'Added Successfully');
     })
     .catchError((error){
-      print(error.toString());
+      if (kDebugMode) {
+        print(error.toString());
+      }
       emit(LayoutInsertTableErrorState());
     });
   }
@@ -644,11 +706,15 @@ class LayoutCubit extends Cubit<LayoutState> {
         tableList.add(TableModel.fromJson(element.data()));
         tableListId.add(element.id);
       });
-      print(tableList.length);
+      if (kDebugMode) {
+        print(tableList.length);
+      }
       emit(LayoutGetTableListSuccessState());
     })
     .catchError((error){
-      print(error);
+      if (kDebugMode) {
+        print(error);
+      }
       emit(LayoutGetTableListErrorState());
     });
 

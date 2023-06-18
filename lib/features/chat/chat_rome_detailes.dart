@@ -19,7 +19,7 @@ class ChatRomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Builder(builder: (BuildContext context) {
-      LayoutCubit.get(context).GetMessageInChat(
+      LayoutCubit.get(context).getMessageInChat(
           senderId: CacheHelper.getData(key: 'uId'),
           receiverId: receiverId);
       return BlocConsumer<LayoutCubit, LayoutState>(
@@ -81,7 +81,7 @@ class ChatRomePage extends StatelessWidget {
                       Expanded(
                         child: TextFormField(
                           onChanged: (value) {
-                            cubit.EmitState();
+                            cubit.emitState();
                           },
                           controller: messageSendController,
                           maxLines: 2,
@@ -93,7 +93,7 @@ class ChatRomePage extends StatelessWidget {
                       ),
                       IconButton(
                           onPressed: () {
-                            cubit.SendMessage(
+                            cubit.sendMessage(
                                 senderId:CacheHelper.getData(key: 'uId'),
                                 receiverId: receiverId,
                                 date: DateTime.now().toString(),

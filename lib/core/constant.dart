@@ -270,7 +270,7 @@ Widget listOfAbsenceTeachr({required StudentModel model,context,index}) {
             color: Colors.white,
             child: Center(
               child: Checkbox(value: LayoutCubit.get(context).attendanceStudent[index], onChanged: (value) {
-                LayoutCubit.get(context).atendStudent(index: index);
+                LayoutCubit.get(context).attendStudent(index: index);
                 print(LayoutCubit.get(context).attendanceStudent[index]);
               }),
             ),

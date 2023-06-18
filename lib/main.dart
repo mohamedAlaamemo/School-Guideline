@@ -52,7 +52,7 @@ class MyApp extends StatelessWidget {
          BlocProvider(create: (context)=>AddNewCubit()),
          BlocProvider(create: (context)=>FormCubit()..getAllForm(context)),
          BlocProvider(create: (context)=>LoginCubit()),
-         BlocProvider(create: (context)=>LayoutCubit()..getAllStudentParent()..GitUserData(coll:'${CacheHelper.getData(key: 'kind')}')),
+         BlocProvider(create: (context)=>LayoutCubit()..getAllStudentParent()..gitUserData(coll:'${CacheHelper.getData(key: 'kind')}')),
        ],
       child: MaterialApp(
         themeMode: ThemeMode.light,
@@ -62,5 +62,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-// NetworkImage("https://cdn-icons-png.flaticon.com/128/2995/2995462.png",)
-// NetworkImage("https://cdn-icons-png.flaticon.com/128/3153/3153044.png",)

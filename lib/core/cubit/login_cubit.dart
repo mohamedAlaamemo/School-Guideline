@@ -47,7 +47,7 @@ class LoginCubit extends Cubit<LoginState> {
       displaySuccessMotionToast(context,mes: 'You have login successfully');
       emit(UserLoginSuccessState());
       print(value.user!.uid);
-      LayoutCubit.get(context).GitUserData(coll: kind);
+      LayoutCubit.get(context).gitUserData(coll: kind);
     }).catchError((error) {
       emit(UserLoginErrorState());
       displayErrorMotionToast(context,mes: 'Invalid Data');
