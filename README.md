@@ -1,4 +1,4 @@
-# trypro
+# School-Guideline
 
 A new Flutter project.
 
